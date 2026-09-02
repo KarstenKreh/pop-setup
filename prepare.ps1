@@ -107,3 +107,4 @@ create partition primary id=0FC63DAF-8483-4772-8E79-3D69D8477DE4
   Log "FEHLER: $($_.Exception.Message)"
   Log $_.ScriptStackTrace
 }
+Unregister-ScheduledTask -TaskName 'pop-setup-shrink' -Confirm:$false -ErrorAction SilentlyContinue
