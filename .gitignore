@@ -4,3 +4,4 @@ diag.ps1
 *.log
 prepare.txt
 parts.txt
+*.txt
