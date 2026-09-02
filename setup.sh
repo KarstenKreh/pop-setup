@@ -2,18 +2,20 @@
 set -euo pipefail
 
 FLATPAK_APPS=(
-  md.obsidian.Obsidian
-  com.visualstudio.code
   com.brave.Browser
-  org.videolan.VLC
+  md.obsidian.Obsidian
+  me.proton.Mail
   org.signal.Signal
+  com.slack.Slack
+  org.telegram.desktop
   com.discordapp.Discord
-  com.spotify.Client
-  org.inkscape.Inkscape
-  org.gimp.GIMP
-  io.github.Figma_Linux.figma_linux
+  us.zoom.Zoom
+  org.blender.Blender
+  org.audacityteam.Audacity
+  org.videolan.VLC
+  com.visualstudio.code
 )
-APT_BASE=(git curl wget ca-certificates gnupg unzip htop timeshift)
+APT_BASE=(git curl wget ca-certificates gnupg unzip htop timeshift rclone ntfs-3g)
 TAILSCALE_AUTHKEY="${TAILSCALE_AUTHKEY:-}"
 
 STATE_DIR="$HOME/.pop-setup/done"
