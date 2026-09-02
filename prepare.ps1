@@ -1,5 +1,5 @@
-param(
-  [int]$WindowsTargetGB = 600,
+﻿param(
+  [int]$WindowsTargetGB = 250,
   [int]$UsbDiskNumber = 1,
   [switch]$SkipShrink,
   [switch]$SkipUsb

@@ -1,18 +1,18 @@
-# Fortschritt Pop!_OS-Umstieg
+﻿# Fortschritt Pop!_OS-Umstieg
 
 Laptop: i9-14900HX, RTX 4070 Laptop, 32 GB, eine 2-TB-NVMe (Crucial P310).
 Plan: Dual-Boot, Windows 11 Home bleibt verkleinert als Notnagel, Pop!_OS 24.04 NVIDIA wird Hauptsystem.
 
-Für den Agenten: Diese Datei ist die Wahrheit über den Stand. Zuerst hier lesen, dann weitermachen. Erledigtes abhaken, Datum dazuschreiben.
+FÃ¼r den Agenten: Diese Datei ist die Wahrheit Ã¼ber den Stand. Zuerst hier lesen, dann weitermachen. Erledigtes abhaken, Datum dazuschreiben.
 
 ## Phase 1: Vorbereitung in Windows (macht der Agent)
 
 - [x] Hardware und Platte erfasst (2026-09-02)
 - [x] Repo angelegt, Setup-Skript geschrieben (2026-09-02)
-- [ ] ISO geladen und Prüfsumme geprüft (`pop-os_24.04_amd64_nvidia_27.iso`, SHA256 `2c68c26e…`)
-- [ ] Diagnose: Secure Boot, BitLocker, minimale Größe von C:
+- [ ] ISO geladen und PrÃ¼fsumme geprÃ¼ft (`pop-os_24.04_amd64_nvidia_27.iso`, SHA256 `2c68c26eâ€¦`)
+- [ ] Diagnose: Secure Boot, BitLocker, minimale GrÃ¶ÃŸe von C:
 - [ ] Ruhezustand und Schnellstart in Windows aus
-- [ ] C: verkleinert, freier Platz für Linux
+- [ ] C: verkleinert, freier Platz fÃ¼r Linux
 - [ ] USB-Stick mit ISO beschrieben und verifiziert
 
 ## Phase 2: Installation (macht Karsten, siehe INSTALL.md)
@@ -21,7 +21,7 @@ Für den Agenten: Diese Datei ist die Wahrheit über den Stand. Zuerst hier lese
 - [ ] Von USB gebootet, Pop!_OS installiert (Custom, in den freien Platz)
 - [ ] Erster Start in Pop!_OS, WLAN verbunden
 
-## Phase 3: Einrichtung in Pop!_OS (Skript, Agent übernimmt wieder)
+## Phase 3: Einrichtung in Pop!_OS (Skript, Agent Ã¼bernimmt wieder)
 
 Skriptschritte, das Skript hakt sie selbst ab:
 
@@ -49,6 +49,13 @@ Von Hand danach (je zwei Klicks, siehe INSTALL.md unten):
 - [ ] COSMIC: Akzentfarbe, Dock, Workspaces (Coding tiled, Rest floating)
 - [ ] 1Password angemeldet
 - [ ] Obsidian-Vault und Proton Drive (rclone) angebunden
+
+## Entschieden am 2026-09-02
+
+- Windows bleibt mit ca. 250 GB als Notnagel, kein gemeinsamer Datenbereich.
+- Nichts doppelt: Proton Drive und SharePoint unter Linux per rclone bei Bedarf, lokale Proton-Kopie in Windows (113 GB) wird entfernt, OneDrive nur Platzhalter.
+- Repos wohnen im Linux-Home, Obsidian klein auf beiden Seiten.
+- Partitionen neu: POP_EFI 1 GB, POP_RECOVERY 4 GB, POP_ROOT Rest verschluesselt.
 
 ## Notizen
 
