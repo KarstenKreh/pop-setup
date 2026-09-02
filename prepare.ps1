@@ -1,4 +1,4 @@
-﻿param(
+param(
   [int]$WindowsTargetGB = 250,
   [int]$UsbDiskNumber = 1,
   [switch]$SkipShrink,
@@ -71,7 +71,6 @@ create partition primary id=0FC63DAF-8483-4772-8E79-3D69D8477DE4
       if ($_.DriveLetter) { try { Remove-PartitionAccessPath -DiskNumber $UsbDiskNumber -PartitionNumber $_.PartitionNumber -AccessPath "$($_.DriveLetter):" } catch {} }
     }
     Clear-Disk -Number $UsbDiskNumber -RemoveData -RemoveOEM -Confirm:$false
-    Set-Disk -Number $UsbDiskNumber -IsOffline $true
     Set-Disk -Number $UsbDiskNumber -IsReadOnly $false
     $src = [IO.File]::Open($iso, 'Open', 'Read', 'Read')
     $dst = New-Object IO.FileStream("\\.\PhysicalDrive$UsbDiskNumber", 'Open', 'Write', 'None', 4MB, 'WriteThrough')
@@ -99,7 +98,6 @@ create partition primary id=0FC63DAF-8483-4772-8E79-3D69D8477DE4
     $hasher.TransformFinalBlock($buf, 0, 0) | Out-Null
     $rd.Dispose()
     $stickSha = ([BitConverter]::ToString($hasher.Hash) -replace '-', '').ToLower()
-    Set-Disk -Number $UsbDiskNumber -IsOffline $false
     if ($stickSha -ne $expectedSha) { throw "Stick-Pruefsumme falsch: $stickSha" }
     Log "Stick verifiziert, Pruefsumme stimmt"
   }
