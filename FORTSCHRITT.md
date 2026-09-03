@@ -50,7 +50,11 @@ Von Hand danach (je zwei Klicks, siehe INSTALL.md unten):
 - [ ] `gh auth login`, `claude` einmal gestartet
 - [ ] COSMIC: Akzentfarbe, Dock, Workspaces (Coding tiled, Rest floating)
 - [ ] 1Password angemeldet
-- [ ] Obsidian-Vault und Proton Drive (rclone) angebunden
+- [x] Obsidian-Vault nach ~/Documents/Obsidian kopiert (2026-09-03)
+- [x] Repos nach ~/Repositories kopiert, 40 GB ohne node_modules (2026-09-03)
+- [x] .ssh, ~/.claude (CLAUDE.md, Hook, Skript, settings), ~/.codex, ~/.gemini von Windows uebernommen (2026-09-03)
+- [ ] Proton Drive per rclone anbinden, danach claude-sync/AGENTS.md als Quelle fuer ~/.claude/CLAUDE.md
+- [ ] LM-Studio- und memozero-Modelle (73 GB + 32 GB) von /mnt/win holen, wenn gewuenscht
 
 ## Entschieden am 2026-09-02
 
