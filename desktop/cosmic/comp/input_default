@@ -1,0 +1,18 @@
+(
+    state: Enabled,
+    acceleration: None,
+    calibration: None,
+    click_method: None,
+    disable_while_typing: None,
+    left_handed: None,
+    middle_button_emulation: None,
+    rotation_angle: None,
+    scroll_config: Some((
+        method: Some(OnButtonDown),
+        natural_scroll: None,
+        scroll_button: Some(274),
+        scroll_factor: None,
+    )),
+    tap_config: None,
+    map_to_output: None,
+)

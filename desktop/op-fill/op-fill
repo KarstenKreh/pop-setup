@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -uo pipefail
+export PATH="$HOME/.local/bin:$PATH"
+unset ELECTRON_RUN_AS_NODE
+
+fail() { command -v notify-send >/dev/null && notify-send -a "1Password ausfüllen" "$1" "${2:-}"; echo "$1 ${2:-}" >&2; exit 1; }
+
+
+items=$(op item list --categories Login --format json 2>/dev/null) || fail "Konnte Einträge nicht laden"
+id=$(printf '%s' "$items" | op-pick) || exit 0
+[[ -z "$id" ]] && exit 0
+
+creds=$(op item get "$id" --fields label=username,label=password --reveal --format json 2>/dev/null) || fail "Eintrag konnte nicht gelesen werden"
+user=$(printf '%s' "$creds" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(next((f.get("value","") for f in d if f.get("id")=="username"),""),end="")')
+pass=$(printf '%s' "$creds" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(next((f.get("value","") for f in d if f.get("id")=="password"),""),end="")')
+
+sleep 0.4
+if [[ -n "$user" ]]; then
+    printf '%s' "$user" | wl-copy -o; sleep 0.15; keytap ctrl+v; sleep 0.15; keytap tab; sleep 0.15
+fi
+printf '%s' "$pass" | wl-copy -o; sleep 0.15; keytap ctrl+v; sleep 0.3
+wl-copy --clear

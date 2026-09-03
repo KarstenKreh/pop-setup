@@ -1,0 +1,13 @@
+[Unit]
+Description=COSMIC Night Light (Blaulichtfilter per Layer-Shell-Overlay)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%HOME%/.local/bin/cosmic-nightlight
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

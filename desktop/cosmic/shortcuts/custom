@@ -1,0 +1,6 @@
+{
+    (modifiers: [], key: "Print"): System(Screenshot),
+    (modifiers: [Super, Shift], key: "s"): Spawn("cosmic-screenshot"),
+    (modifiers: [Super, Shift], key: "n"): Spawn("%HOME%/.local/bin/nightlight-toggle"),
+    (modifiers: [Super, Shift], key: "p"): Spawn("%HOME%/.local/bin/op-fill"),
+}

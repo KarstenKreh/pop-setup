@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+import gi, json, sys
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Gdk
+
+items = json.load(sys.stdin)
+rows = sorted(((i.get("title") or ""), (i.get("urls") or [{}])[0].get("href", "") if i.get("urls") else "", i["id"]) for i in items)
+
+win = Gtk.Window(title="1Password ausfüllen")
+win.set_default_size(520, 420)
+win.set_position(Gtk.WindowPosition.CENTER)
+win.set_keep_above(True)
+box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, border_width=8)
+entry = Gtk.SearchEntry(placeholder_text="Suchen …")
+store = Gtk.ListStore(str, str, str)
+for r in rows: store.append(list(r))
+flt = store.filter_new()
+def visible(model, it, _):
+    q = entry.get_text().lower().strip()
+    return not q or all(w in (model[it][0] + " " + model[it][1]).lower() for w in q.split())
+flt.set_visible_func(visible)
+view = Gtk.TreeView(model=flt, headers_visible=False)
+view.append_column(Gtk.TreeViewColumn("Titel", Gtk.CellRendererText(), text=0))
+view.append_column(Gtk.TreeViewColumn("URL", Gtk.CellRendererText(foreground="#888"), text=1))
+scroll = Gtk.ScrolledWindow(); scroll.add(view)
+box.pack_start(entry, False, False, 0); box.pack_start(scroll, True, True, 0)
+win.add(box)
+
+def choose(*_):
+    model, it = view.get_selection().get_selected()
+    if it: print(model[it][2]); sys.stdout.flush(); Gtk.main_quit()
+def select_first():
+    it = flt.get_iter_first()
+    if it: view.get_selection().select_iter(it)
+def on_search(*_):
+    flt.refilter(); select_first()
+def on_key(w, ev):
+    if ev.keyval == Gdk.KEY_Escape: Gtk.main_quit(); return True
+    if ev.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter): choose(); return True
+    if ev.keyval in (Gdk.KEY_Down, Gdk.KEY_Up) and w is entry: view.grab_focus(); return False
+    return False
+entry.connect("search-changed", on_search)
+win.connect("key-press-event", on_key)
+view.connect("row-activated", choose)
+win.connect("destroy", Gtk.main_quit)
+win.show_all(); select_first(); entry.grab_focus()
+Gtk.main()

@@ -1,0 +1,12 @@
+# mode: off | on | auto
+mode=auto
+# Farbtemperatur in Kelvin (niedriger = waermer)
+temp=3800
+# Filterstaerke 0-100
+strength=45
+day_temp=6500
+night_temp=3400
+sunset=21:00
+sunrise=06:00
+fade=45
+max_alpha=0.60

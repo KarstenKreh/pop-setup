@@ -58,6 +58,48 @@ Von Hand danach (je zwei Klicks, siehe INSTALL.md unten):
 - [ ] Optional: smart-change-Sites (FinTwin, DINspektor, ...) einhaengen, Login liegt als Remote sp-smartchange-onedrive vor
 - [ ] LM-Studio- und memozero-Modelle (73 GB + 32 GB) von /mnt/win holen, wenn gewuenscht
 
+## Phase 4: Feineinstellungen (desktop.sh, Agent)
+
+Alles aus dem Ordner `desktop/`, Skript hakt selbst ab:
+
+- [x] apt_desktop
+- [x] environment
+- [x] nightlight
+- [x] keytap
+- [x] op_fill
+- [x] audio
+- [x] cosmic
+- [x] onepassword_desktop
+- [x] wispr_flow
+- [x] wispr_prefs
+
+Von Hand danach:
+
+- [x] Wispr Flow angemeldet (2026-09-03)
+- [x] 1Password: Systemauthentifizierung und CLI-Integration eingeschaltet, SSH-Agent an (2026-09-03)
+- [x] 1Password-Flatpak entfernt, nur noch das .deb (2026-09-03)
+
+## Stand 2026-09-03, nachmittags
+
+Auf diesem Rechner ist alles aus Phase 4 bereits von Hand eingerichtet; `desktop.sh` ist die
+Konserve davon für den nächsten Rechner oder eine Neuinstallation. Reihenfolge dann:
+`setup.sh`, abmelden, `desktop.sh`, abmelden, Wispr Flow und 1Password anmelden, `desktop.sh`
+noch einmal (setzt die Wispr-Einstellungen, die erst nach dem Anmelden existieren).
+
+Erkenntnisse, die Zeit sparen:
+
+- COSMIC hat kein Nachtlicht und exportiert kein Gamma-Protokoll; gammastep/wlsunset gehen nicht.
+  Deshalb das eigene Overlay in `desktop/nightlight`.
+- Wispr Flow im nativen Wayland-Modus zeigt die Leiste als normales schwarzes Fenster. XWayland
+  (`--ozone-platform=x11`) behebt das. Leiste rechts (`statusDockEdge`) und versteckt
+  (`hideFlowBarPermanently`) sind Werte in der Config, in der App gibt es dafür keinen Schalter.
+- Bluetooth-Kopfhörer schalten beim Aufnehmen in den Telefon-Modus und reißen die Musik ab.
+  Lösung: Laptop-Mikro als Standard, `bluetooth.autoswitch-to-headset-profile = false`.
+- 1Password füllt unter Linux keine Desktop-Programme aus. `op-fill` macht das über die
+  CLI-Integration plus `keytap`. `op whoami` meldet trotzdem "not signed in", das ist normal.
+- Aus einer Claude-Code-Shell heraus Electron-Apps immer mit `env -u ELECTRON_RUN_AS_NODE`
+  starten, sonst brechen sie mit "bad option" ab.
+
 ## Entschieden am 2026-09-02
 
 - Windows bleibt mit ca. 250 GB als Notnagel, kein gemeinsamer Datenbereich.
