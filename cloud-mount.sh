@@ -24,4 +24,5 @@ rclone listremotes | grep -qx 'proton:'      && unit proton      "$HOME/Proton D
 rclone listremotes | grep -qx 'sp-dktech:'   && unit sp-dktech   "$HOME/SharePoint/DK Tech Solutions UG"
 rclone listremotes | grep -qx 'sp-memozero:' && unit sp-memozero "$HOME/SharePoint/memozero"
 rclone listremotes | grep -qx 'sp-safina:'   && unit sp-safina   "$HOME/SharePoint/Safina AI"
+rclone listremotes | grep -qx 'sp-allgemein:' && unit sp-allgemein "$HOME/SharePoint/SmartChange Allgemein"
 sleep 3; systemctl --user --no-pager list-units 'rclone-*' ; ls "$HOME/Proton Drive" 2>/dev/null | head
