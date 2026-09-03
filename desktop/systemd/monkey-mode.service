@@ -1,0 +1,9 @@
+[Unit]
+Description=Monkey Mode: Tagesliste in Obsidian bauen
+ConditionACPower=true
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documents/Obsidian/.claude/scripts
+ExecStart=/usr/bin/python3 %h/Documents/Obsidian/.claude/scripts/tagesliste.py
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin

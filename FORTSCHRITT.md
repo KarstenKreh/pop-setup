@@ -72,12 +72,15 @@ Alles aus dem Ordner `desktop/`, Skript hakt selbst ab:
 - [x] onepassword_desktop
 - [x] wispr_flow
 - [x] wispr_prefs
+- [x] monkey_mode
 
 Von Hand danach:
 
 - [x] Wispr Flow angemeldet (2026-09-03)
 - [x] 1Password: Systemauthentifizierung und CLI-Integration eingeschaltet, SSH-Agent an (2026-09-03)
 - [x] 1Password-Flatpak entfernt, nur noch das .deb (2026-09-03)
+- [x] Monkey Mode: tagesliste.py pfadunabhängig (`Path.home()`), systemd-Timer statt Windows-Aufgabe (2026-09-03)
+- [ ] `gh auth login` mit Scope `project`, sonst läuft Monkey Mode nur aus dem Cache
 
 ## Stand 2026-09-03, nachmittags
 

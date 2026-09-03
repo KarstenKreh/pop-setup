@@ -115,6 +115,17 @@ step_environment() {
   cp "$D"/environment.d/*.conf "$HOME/.config/environment.d/"
 }
 
+step_monkey_mode() {
+  mkdir -p "$HOME/.config/systemd/user"
+  cp "$D/systemd/monkey-mode.service" "$D/systemd/monkey-mode.timer" "$HOME/.config/systemd/user/"
+  systemctl --user daemon-reload
+  if [[ -f "$HOME/Documents/Obsidian/.claude/scripts/tagesliste.py" ]]; then
+    systemctl --user enable --now monkey-mode.timer
+  else
+    echo "Obsidian-Vault mit tagesliste.py fehlt noch, Timer wird spaeter aktiviert."
+  fi
+}
+
 run_step apt_desktop step_apt_desktop
 run_step environment step_environment
 run_step nightlight step_nightlight
@@ -125,6 +136,7 @@ run_step cosmic step_cosmic
 run_step onepassword_desktop step_onepassword_desktop
 run_step wispr_flow step_wispr_flow
 run_step wispr_prefs step_wispr_prefs || true
+run_step monkey_mode step_monkey_mode
 
 say "Fertig. Log: $LOG"
 echo "Einmal ab- und wieder anmelden (input-Gruppe, COSMIC-Einstellungen, Autostart)."

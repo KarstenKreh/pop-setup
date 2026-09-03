@@ -12,7 +12,7 @@ Alles, was nach `setup.sh` von Hand oder per Agent dazukam. `../desktop.sh` spie
 | `wispr-flow/` | Inoffizieller Linux-Port, Start im XWayland-Modus, Leiste rechts und im Ruhezustand versteckt | `.deb`, `~/.local/share/applications`, `~/.config/autostart`, `~/.config/Wispr Flow/config.json` |
 | `autostart/`, `ssh/` | 1Password beim Anmelden, SSH-Agent von 1Password | `~/.config/autostart`, `~/.ssh/config` |
 | `environment.d/` | PATH und Standardbrowser für die grafische Sitzung | `~/.config/environment.d` |
-| `systemd/` | User-Service für das Nachtlicht (`%HOME%` wird ersetzt) | `~/.config/systemd/user` |
+| `systemd/` | User-Service für das Nachtlicht (`%HOME%` wird ersetzt); Timer für Monkey Mode (10, 16, 22 Uhr, nur am Netzteil, holt Verpasstes nach) | `~/.config/systemd/user` |
 
 Tastenkürzel: `Super+Shift+N` Nachtlicht an/aus, `Super+Shift+P` 1Password ausfüllen, `Super+Shift+S` Screenshot.
 

@@ -1,0 +1,10 @@
+[Unit]
+Description=Monkey Mode dreimal taeglich
+
+[Timer]
+OnCalendar=*-*-* 10,16,22:00:00
+Persistent=true
+Unit=monkey-mode.service
+
+[Install]
+WantedBy=timers.target
