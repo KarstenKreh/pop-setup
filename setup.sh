@@ -90,7 +90,7 @@ EOF
 }
 
 snapshot() {
-  sudo timeshift --create --comments "$1" --tags O || echo "Snapshot fehlgeschlagen, weiter."
+  sudo timeshift --create --comments "$1" || echo "Snapshot fehlgeschlagen, weiter."
 }
 
 step_snapshot_before() { snapshot "vor Setup-Skript"; }
@@ -108,9 +108,9 @@ step_firmware() {
 
 step_flatpak() {
   sudo apt-get install -y flatpak
-  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   for app in "${FLATPAK_APPS[@]}"; do
-    flatpak install -y --noninteractive flathub "$app" || echo "Flatpak $app nicht installiert, weiter."
+    flatpak install --user -y --noninteractive flathub "$app" || echo "Flatpak $app nicht installiert, weiter."
   done
 }
 
@@ -192,6 +192,75 @@ step_cosmic_dark() {
 
 step_snapshot_after() { snapshot "nach Setup-Skript"; }
 
+step_session_path() {
+  # Grafisch gestartete Programme sehen ~/.local/bin sonst nicht (COSMIC liest .bashrc/.profile nicht).
+  mkdir -p "$HOME/.config/environment.d"
+  cat >"$HOME/.config/environment.d/10-local-bin.conf" <<'EOF'
+PATH=$HOME/.local/bin:$PATH
+EOF
+}
+
+step_t3code() {
+  local url file want have icondir tmp
+  url="$(curl -fsSL https://api.github.com/repos/pingdotgg/t3code/releases/latest \
+        | grep -o 'https://[^"]*x86_64\.AppImage' | head -1)"
+  if [[ -z "$url" ]]; then
+    echo "Kein T3-Code-AppImage in den Releases gefunden, weiter."
+    return 0
+  fi
+  file="$(basename "$url")"
+  mkdir -p "$HOME/Applications" "$HOME/.local/bin"
+  curl -fL -o "$HOME/Applications/$file" "$url"
+
+  want="$(curl -fsSL "${url%/*}/latest-linux.yml" | awk '/^sha512:/ {print $2; exit}')"
+  have="$(openssl dgst -sha512 -binary "$HOME/Applications/$file" | base64 -w0)"
+  if [[ -n "$want" && "$want" != "$have" ]]; then
+    echo "Pruefsumme von $file stimmt nicht. Datei wird verworfen."
+    rm -f "$HOME/Applications/$file"
+    return 1
+  fi
+
+  chmod +x "$HOME/Applications/$file"
+  ln -sfn "$HOME/Applications/$file" "$HOME/Applications/T3-Code.AppImage"
+
+  # Icons liegen im AppImage, im Wurzelverzeichnis nur als toter Symlink.
+  tmp="$(mktemp -d)"
+  ( cd "$tmp" && "$HOME/Applications/T3-Code.AppImage" --appimage-extract 'usr/share/icons/*' >/dev/null 2>&1 ) || true
+  for size in 512x512 256x256 128x128; do
+    icondir="$HOME/.local/share/icons/hicolor/$size/apps"
+    mkdir -p "$icondir"
+    local src
+    src="$(find "$tmp/squashfs-root" -path "*/$size/*" -name 't3code.png' -type f 2>/dev/null | head -1)"
+    [[ -n "$src" ]] && cp "$src" "$icondir/t3code.png"
+  done
+  rm -rf "$tmp"
+
+  mkdir -p "$HOME/.local/share/applications"
+  cat >"$HOME/.local/share/applications/t3code.desktop" <<EOF
+[Desktop Entry]
+Name=T3 Code
+GenericName=AI Coding Agent GUI
+Comment=Oberflaeche fuer Coding-Agents (Claude Code, Codex, ...)
+Exec=$HOME/Applications/T3-Code.AppImage --no-sandbox %U
+Icon=t3code
+Terminal=false
+Type=Application
+StartupWMClass=t3code
+MimeType=x-scheme-handler/t3code;x-scheme-handler/t3code-dev;
+Categories=Development;
+EOF
+
+  cat >"$HOME/.local/bin/t3code" <<'EOF'
+#!/usr/bin/env bash
+# Startet T3 Code; "t3code ." oeffnet das aktuelle Verzeichnis als Projekt.
+exec "$HOME/Applications/T3-Code.AppImage" --no-sandbox "$@"
+EOF
+  chmod +x "$HOME/.local/bin/t3code"
+
+  update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
+  gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+}
+
 run_step nvidia_check step_nvidia_check
 run_step apt_base step_apt_base
 run_step timeshift_config step_timeshift_config
@@ -206,6 +275,8 @@ run_step claude_code step_claude_code
 run_step docker step_docker
 run_step nvidia_container_toolkit step_nvidia_container_toolkit
 run_step tailscale step_tailscale
+run_step session_path step_session_path
+run_step t3code step_t3code
 run_step cosmic_dark step_cosmic_dark
 run_step snapshot_after step_snapshot_after
 
