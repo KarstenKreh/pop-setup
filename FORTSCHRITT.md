@@ -53,7 +53,9 @@ Von Hand danach (je zwei Klicks, siehe INSTALL.md unten):
 - [x] Obsidian-Vault nach ~/Documents/Obsidian kopiert (2026-09-03)
 - [x] Repos nach ~/Repositories kopiert, 40 GB ohne node_modules (2026-09-03)
 - [x] .ssh, ~/.claude (CLAUDE.md, Hook, Skript, settings), ~/.codex, ~/.gemini von Windows uebernommen (2026-09-03)
-- [ ] Proton Drive per rclone anbinden, danach claude-sync/AGENTS.md als Quelle fuer ~/.claude/CLAUDE.md
+- [x] Proton Drive und SharePoint (DK Tech, memozero, Safina AI) per rclone 1.75 eingehaengt, systemd-user-Units rclone-*.service, Skripte cloud-login.sh / cloud-mount.sh (2026-09-03)
+- [ ] Agenten-Regeln aus ~/Proton Drive/agent-sync (RULES.md, Ordner heisst nicht mehr claude-sync) auf Linux verteilen; die .ps1-Skripte dort laufen hier nicht
+- [ ] Optional: smart-change-Sites (FinTwin, DINspektor, ...) einhaengen, Login liegt als Remote sp-smartchange-onedrive vor
 - [ ] LM-Studio- und memozero-Modelle (73 GB + 32 GB) von /mnt/win holen, wenn gewuenscht
 
 ## Entschieden am 2026-09-02
