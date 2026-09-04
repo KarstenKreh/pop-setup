@@ -9,4 +9,6 @@ night_temp=3400
 sunset=21:00
 sunrise=06:00
 fade=45
+# zusaetzliches Abdunkeln 0-90 (fuer Backlight schon am Minimum)
+dim=0
 max_alpha=0.60

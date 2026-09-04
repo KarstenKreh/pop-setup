@@ -16,8 +16,8 @@
 /* ---------- Konfiguration ---------- */
 static char cfg_path[512];
 static struct { char mode[16]; int temp, day_temp, night_temp;
-                int sunset_m, sunrise_m, fade_m, strength; double max_alpha; } C = {
-    "auto", 3400, 6500, 3400, 20*60+30, 7*60, 45, 60, 0.60 };
+                int sunset_m, sunrise_m, fade_m, strength, dim; double max_alpha; } C = {
+    "auto", 3400, 6500, 3400, 20*60+30, 7*60, 45, 60, 0, 0.60 };
 static time_t cfg_mtime = 0;
 
 static int parse_hhmm(const char *s){ int h=0,m=0; if(sscanf(s,"%d:%d",&h,&m)!=2) return -1; return h*60+m; }
@@ -40,6 +40,7 @@ static void load_cfg(void){
         else if(!strcmp(k,"sunrise")){ int t=parse_hhmm(v); if(t>=0) C.sunrise_m=t; }
         else if(!strcmp(k,"fade")) C.fade_m=atoi(v);
         else if(!strcmp(k,"strength")) C.strength=atoi(v);
+        else if(!strcmp(k,"dim")) C.dim=atoi(v);
         else if(!strcmp(k,"max_alpha")) C.max_alpha=atof(v);
     }
     fclose(f);
@@ -65,18 +66,25 @@ static void bb_rgb(double K, double *r, double *g, double *b){
    Blau: OV_b=0  ->  a = 1-bM
    Rot:  OV_r=1  (rM ist bei warmen Temperaturen 1)
    Gruen: OV_g = (gM-bM)/(1-bM)                                        */
-static uint32_t argb_for_temp(double K, double max_alpha, int strength){
+static uint32_t argb_for_temp(double K, double max_alpha, int strength, int dim){
     double rM,gM,bM; bb_rgb(K,&rM,&gM,&bM);
-    double a = (1.0-bM) * (strength<0?0:(strength>100?100:strength))/100.0;
-    if (a < 0.002) return 0;                 /* kein Filter noetig */
+    int s = strength<0?0:(strength>100?100:strength);
+    int dpct = dim<0?0:(dim>90?90:dim);
+    double a = (1.0-bM) * s/100.0;
     if (a > max_alpha) a = max_alpha;
-    double ovg = (gM-bM)/(1.0-bM); if(ovg<0)ovg=0; if(ovg>1)ovg=1;
-    /* ovg bleibt die Farbtoncharakteristik; a steuert die Staerke */
-    double ovr = rM;               if(ovr<0)ovr=0; if(ovr>1)ovr=1;
+    if (a < 0.002) a = 0;
+    double d = dpct/100.0;
+    if (a == 0 && d < 0.002) return 0;
+    double ovr=0, ovg=0;
+    if (a > 0){
+        ovg = (gM-bM)/(1.0-bM); if(ovg<0)ovg=0; if(ovg>1)ovg=1;
+        ovr = rM;               if(ovr<0)ovr=0; if(ovr>1)ovr=1;
+    }
+    double keep = 1.0-d;
     /* ARGB8888 mit vormultipliziertem Alpha */
-    uint32_t A=(uint32_t)lround(a*255.0);
-    uint32_t R=(uint32_t)lround(ovr*a*255.0);
-    uint32_t G=(uint32_t)lround(ovg*a*255.0);
+    uint32_t A=(uint32_t)lround((a+d-a*d)*255.0);
+    uint32_t R=(uint32_t)lround(ovr*a*keep*255.0);
+    uint32_t G=(uint32_t)lround(ovg*a*keep*255.0);
     return (A<<24)|(R<<16)|(G<<8)|0;
 }
 
@@ -213,7 +221,8 @@ int main(int argc,char **argv){
 
     while(running){
         load_cfg();
-        uint32_t want=argb_for_temp(current_temp(),C.max_alpha,C.strength);
+        uint32_t want=argb_for_temp(current_temp(),C.max_alpha,C.strength,
+                                    strcmp(C.mode,"off")?C.dim:0);
         if(want!=cur_argb){ cur_argb=want; for(struct out *o=outs;o;o=o->next) redraw(o); }
         wl_display_flush(dpy);
         struct pollfd pfd={wl_display_get_fd(dpy),POLLIN,0};

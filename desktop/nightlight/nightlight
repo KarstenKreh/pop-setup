@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Steuerung fuer cosmic-nightlight
 CFG="$HOME/.config/cosmic-nightlight/config"
-mkdir -p "$(dirname "$CFG")"; [ -f "$CFG" ] || printf 'mode=auto\ntemp=3400\nstrength=45\nday_temp=6500\nnight_temp=3400\nsunset=20:30\nsunrise=07:00\nfade=45\nmax_alpha=0.60\n' > "$CFG"
+mkdir -p "$(dirname "$CFG")"; [ -f "$CFG" ] || printf 'mode=auto\ntemp=3400\nstrength=45\nday_temp=6500\nnight_temp=3400\nsunset=20:30\nsunrise=07:00\nfade=45\ndim=0\nmax_alpha=0.60\n' > "$CFG"
 set_kv(){ local k=$1 v=$2 t; t=$(mktemp); awk -v k="$k" -v v="$v" 'BEGIN{d=0} /^[ \t]*#/{print;next} $0 ~ "^"k"="{print k"="v; d=1; next} {print} END{if(!d) print k"="v}' "$CFG" > "$t"; mv -f "$t" "$CFG"; }
 get_kv(){ grep -E "^$1=" "$CFG" | tail -1 | cut -d= -f2-; }
 case "${1:-status}" in
@@ -11,11 +11,13 @@ case "${1:-status}" in
   toggle)   [ "$(get_kv mode)" = "off" ] && set_kv mode auto || set_kv mode off ;;
   temp)     [ -n "$2" ] && set_kv temp "$2" && set_kv mode on ;;
   strength) [ -n "$2" ] && set_kv strength "$2" ;;
+  dim)      [ -n "$2" ] && set_kv dim "$2" ;;
   status)   echo "Modus:      $(get_kv mode)"
             echo "Temperatur: $(get_kv temp) K   (auto-Nacht: $(get_kv night_temp) K)"
             echo "Staerke:    $(get_kv strength)%"
+            echo "Abdunkeln:  $(get_kv dim)%"
             echo "Zeitplan:   $(get_kv sunset) -> $(get_kv sunrise), Uebergang $(get_kv fade) min"
             systemctl --user is-active --quiet cosmic-nightlight.service && echo "Dienst:     laeuft" || echo "Dienst:     gestoppt" ;;
-  *) echo "nightlight {on|off|auto|toggle|temp <K>|strength <0-100>|status}"; exit 1 ;;
+  *) echo "nightlight {on|off|auto|toggle|temp <K>|strength <0-100>|dim <0-90>|status}"; exit 1 ;;
 esac
-[ "${1:-status}" = status ] || echo "OK - $(get_kv mode), $(get_kv temp)K, $(get_kv strength)%"
+[ "${1:-status}" = status ] || echo "OK - $(get_kv mode), $(get_kv temp)K, Staerke $(get_kv strength)%, Abdunkeln $(get_kv dim)%"

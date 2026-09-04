@@ -19,9 +19,20 @@ Braucht `libwayland-dev`. Die eine `-Wformat-truncation`-Warnung ist harmlos.
 ## Dateien
 
 - `~/.local/bin/cosmic-nightlight` — das laufende Programm
-- `~/.local/bin/nightlight` — Steuerskript (`off`, `on`, `auto`, `temp`, `strength`, `status`)
+- `~/.local/bin/nightlight` — Steuerskript (`off`, `on`, `auto`, `temp`, `strength`, `dim`, `status`)
 - `~/.config/cosmic-nightlight/config` — Einstellungen, wird alle 2 s neu eingelesen
 - `~/.config/systemd/user/cosmic-nightlight.service` — Autostart
+
+## Abdunkeln unter das Hardware-Minimum
+
+`nightlight dim 0-90` mischt zusaetzlich Schwarz in dieselbe Overlay-Flaeche.
+Gedacht fuer Laptops, deren Backlight schon am Minimum steht
+(`/sys/class/backlight/intel_backlight/brightness`). Wirkt in derselben
+Flaeche wie der Farbfilter, kein zweites Overlay. `mode=off` schaltet auch das
+Abdunkeln ab.
+
+Nebenwirkung: Schwarz bleibt schwarz, alles Helle wird dunkler, der Kontrast
+sinkt also mit steigendem `dim`.
 
 ## Bekannte Grenze
 
