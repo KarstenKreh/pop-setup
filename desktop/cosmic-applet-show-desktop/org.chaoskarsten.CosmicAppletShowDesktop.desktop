@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Desktop anzeigen
+Comment=Alle Fenster minimieren oder wieder herstellen
+Type=Application
+Exec=/home/chaoskarsten/.local/bin/cosmic-applet-show-desktop
+Terminal=false
+Categories=COSMIC;
+Keywords=COSMIC;Applet;Desktop;Minimieren;
+Icon=user-desktop-symbolic
+StartupNotify=true
+NoDisplay=true
+X-CosmicApplet=true
+X-HostWaylandDisplay=true

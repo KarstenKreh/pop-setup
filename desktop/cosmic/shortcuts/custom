@@ -3,4 +3,9 @@
     (modifiers: [Super, Shift], key: "s"): Spawn("cosmic-screenshot"),
     (modifiers: [Super, Shift], key: "n"): Spawn("%HOME%/.local/bin/nightlight-toggle"),
     (modifiers: [Super, Shift], key: "p"): Spawn("%HOME%/.local/bin/op-fill"),
+    (modifiers: [Super, Shift], key: "u"): Spawn("%HOME%/.local/bin/op-fill user"),
+    (modifiers: [Super, Shift], key: "k"): Spawn("%HOME%/.local/bin/op-fill pass"),
+    (modifiers: [Ctrl, Alt], key: "q"): Spawn("wtype @"),
+    (modifiers: [Ctrl, Alt], key: "e"): Spawn("wtype €"),
+    (modifiers: [Super], key: "d"): Spawn("%HOME%/.local/bin/show-desktop"),
 }

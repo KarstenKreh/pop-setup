@@ -1,0 +1,22 @@
+[package]
+name = "cosmic-applet-show-desktop"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-only"
+
+[dependencies]
+libcosmic = { git = "https://github.com/pop-os/libcosmic", rev = "511384f6206527cf87369da67a9164831afbabef", default-features = false, features = [
+    "applet",
+    "applet-token",
+    "multi-window",
+    "tokio",
+    "wayland",
+    "winit",
+] }
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[profile.release]
+lto = "thin"
+opt-level = 3

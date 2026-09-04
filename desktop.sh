@@ -59,6 +59,13 @@ step_audio() {
   [[ -n "$mic" ]] && pactl set-default-source "$mic" || true
 }
 
+step_show_desktop() {
+  local src="$HOME/.local/src/show-desktop"
+  mkdir -p "$src"
+  cp "$D"/show-desktop/* "$src/"
+  bash "$src/build.sh"
+}
+
 step_cosmic() {
   local c="$HOME/.config/cosmic"
   mkdir -p "$c/com.system76.CosmicComp/v1" "$c/com.system76.CosmicSettings.Shortcuts/v1" \
@@ -132,6 +139,7 @@ run_step nightlight step_nightlight
 run_step keytap step_keytap
 run_step op_fill step_op_fill
 run_step audio step_audio
+run_step show_desktop step_show_desktop
 run_step cosmic step_cosmic
 run_step onepassword_desktop step_onepassword_desktop
 run_step wispr_flow step_wispr_flow

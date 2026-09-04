@@ -46,7 +46,7 @@ Skriptschritte, das Skript hakt sie selbst ab:
 
 Von Hand danach (je zwei Klicks, siehe INSTALL.md unten):
 
-- [ ] Tailscale angemeldet (`sudo tailscale up`)
+- [x] Tailscale angemeldet (2026-09-03, Geraet `pop-os`, 100.80.97.26)
 - [ ] `gh auth login`, `claude` einmal gestartet
 - [ ] COSMIC: Akzentfarbe, Dock, Workspaces (Coding tiled, Rest floating)
 - [ ] 1Password angemeldet
@@ -65,6 +65,7 @@ Alles aus dem Ordner `desktop/`, Skript hakt selbst ab:
 - [x] apt_desktop
 - [x] environment
 - [x] nightlight
+- [x] show_desktop
 - [x] keytap
 - [x] op_fill
 - [x] audio
@@ -135,3 +136,47 @@ vor; das liesse sich nur mit einer Neuinstallation nachholen.
 
 Icons im Dock fehlen fuer alles, was nach dem Start von `cosmic-panel` installiert wurde. Kein Defekt,
 die Dateien und Caches stimmen: COSMIC liest die Zuordnung nur beim Start ein. Ab- und Anmelden loest es.
+
+## COSMIC: Symbole und Fensterzuordnung (2026-09-03)
+
+Zwei Fallen, die zusammen einen halben Vormittag gekostet haben.
+
+**1. COSMIC liest Programme und Symbole nur beim Start ein.** Alles, was nach dem Anmelden installiert wird, erscheint in Dock, Launcher und App-Bibliothek mit Zahnrad-Platzhalter oder gar nicht. Betroffen sind drei getrennte Prozesse, die einzeln neu starten muessen: `cosmic-panel` (Dock), `cosmic-launcher` (Suche mit Super+/) und `cosmic-app-list` (die Symbolreihe im Dock). Der zuverlaessige Weg ist ab- und anmelden. Wer die Prozesse von Hand beendet, muss aufpassen: `cosmic-session` startet sie selbst nach, aber teils erst nach ueber zwei Minuten. Wer zu frueh selbst eines startet, hat zwei Leisten uebereinander.
+
+**2. Fenster werden ueber `app_id` einer Programmdatei zugeordnet.** Passt nichts, zeigt COSMIC ein Zahnrad, als Beschriftung den letzten Punkt-Abschnitt der `app_id`, und Anheften ans Dock schlaegt fehl: Der Eintrag verschwindet sofort wieder. Die Zuordnung laeuft ueber den Dateinamen der `.desktop`-Datei oder ueber `StartupWMClass`.
+
+Brave im App-Modus meldet sich als `brave-outlook.office.com__mail_-Default` an, mit `brave-` am Anfang, nicht mit dem sonst ueblichen `chrome-`. `--class=` hilft nicht, Chromium ueberschreibt die Klasse bei `--app`-Fenstern immer selbst.
+
+**Nicht raten, nachsehen.** `~/.local/bin/lswt` listet alle offenen Fenster mit ihrer echten `app_id`. Ein kleiner Eigenbau ueber das `ext_foreign_toplevel_list_v1`-Protokoll, weil `wlrctl` und `xdotool` unter COSMIC nicht weiterhelfen. Bei einem neuen Rechner mit uebertragen.
+
+
+## Mail: vier Outlook-Fenster, eines je Mandant (2026-09-03, ersetzt die Abschnitte oben)
+
+Entschieden: Outlook im Web, pro Microsoft-Mandant ein eigenes Brave-Fenster mit eigenem Brave-Profil. Ohne getrennte Profile wirft die Anmeldung eines Mandanten die anderen raus.
+
+**Warum kein Mail-Programm.** In allen Mandanten sperren die aktiven Sicherheitsstandards den SMTP-Versand durch fremde Programme. Thunderbird und Mailspring scheiterten daran. Evolution aus Flathub mit dem Kontotyp "Microsoft 365" funktionierte technisch komplett (Empfangen und Senden ueber Microsofts Graph-Schnittstelle, alle Postfaecher in einem Fenster), wurde aber wegen der altbackenen Oberflaeche wieder verworfen und restlos entfernt. Die Ubuntu-Version von Evolution (3.52) ist ausserdem defekt: sie schreibt bei jedem Start rund 300 Mails erneut als "gelesen" zurueck und blockiert dabei das Fenster.
+
+**Offen geblieben.** Vermutlich ist nicht die Sicherheitsstandard-Einstellung selbst das Problem, sondern der separate Schalter "SMTP AUTH", den Microsoft in neuen Mandanten pro Postfach abschaltet. Den koennte man einzeln wieder anschalten, ohne die Zwei-Faktor-Anmeldung anzutasten. Dann liefe auch ein huebscheres Mail-Programm. Nicht geprueft.
+
+**Welche Domain in welchem Mandanten liegt.** Es sind nur drei Mandanten, nicht vier: smart-change.app und fintwin.app teilen sich einen (b1c07404-a6c6-4367-b25f-fdb34beb564a), safina.ai und memozero.io einen zweiten (f1a63b8d-a074-4159-897f-8917782f5030), 8-reasons.com steht allein (37e63899-a650-42b7-b9fb-98606a9289d1). Nachpruefbar ohne Anmeldung mit `curl -s https://login.microsoftonline.com/<domain>/v2.0/.well-known/openid-configuration`.
+
+**Eingerichtet.** Drei Eintraege in `~/.local/share/applications/`: `outlook-smartchange.desktop`, `outlook-safina.desktop`, `outlook-8reasons.desktop`. Genutzt werden Smart Change und Safina; 8 Reasons steht als Reserve im Menue. Muster:
+
+```
+[Desktop Entry]
+Type=Application
+Name=Outlook Safina
+GenericName=E-Mail
+Exec=flatpak run com.brave.Browser --profile-directory=Outlook-safina --app=https://outlook.office.com/mail/ %U
+Icon=outlook-web
+Terminal=false
+Categories=Network;Email;
+StartupWMClass=brave-outlook.office.com__mail_-Outlook-safina
+StartupNotify=true
+```
+
+Symbol: `~/.local/share/icons/hicolor/scalable/apps/outlook-web.svg`. Nach dem Anlegen einmal ab- und anmelden, sonst kennt COSMIC die Eintraege nicht.
+
+**Geteilte Postfaecher.** Im Safina-Fenster: info@safina.ai, billing@safina.ai, info@memozero.io. Im Smart-Change-Fenster: service@fintwin.app. Einhaengen per Rechtsklick auf den eigenen Namen in der Ordnerliste, "Freigegebenen Ordner hinzufuegen". Ueber Mandantengrenzen hinweg geht das nicht, deshalb die getrennten Fenster.
+
+**Datenreste.** Evolution ist vollstaendig entfernt. Die apt-Pakete der kaputten Version sind noch installiert, Entfernen braucht das sudo-Passwort: `sudo apt remove evolution evolution-ews evolution-plugins evolution-plugin-bogofilter evolution-plugin-pstimport`. Ausserdem liegen noch `~/.var/app/org.mozilla.thunderbird` (5,8 GB) und `~/.var/app/com.getmailspring.Mailspring` (336 MB) herum.
